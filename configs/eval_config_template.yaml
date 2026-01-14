@@ -1,0 +1,18 @@
+# Example of evaluation configuration file
+# python evaluate.py --eval-config ./configs/eval_config.yaml
+
+# Model weight file path
+model_path: './logs/lodopab_edcnn/best_model.pt'
+
+# Training configuration file path (used for initializing the reconstructor)
+config_path: './configs/train_fbp_edcnn.yaml'
+
+
+num_samples: 20        # Evaluation sample size (default: take the first 20 images of the test set)
+device: cuda           # cuda or cpu
+output_dir: './eval_results/edcnn'  
+
+
+dataset: lodopab      
+dataset_impl: 'astra_cuda' 
+save_images: true    

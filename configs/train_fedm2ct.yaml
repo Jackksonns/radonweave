@@ -1,0 +1,42 @@
+reconstructor:
+  name: fedm2ct
+  params:
+    num_filters: 32
+    filter_type: Hann
+    frequency_scaling: 1.0
+
+data:
+  generate_cache: false
+  cache_files:
+    train: './cache_lodopab_train_fbp.npy'
+    validation: './cache_lodopab_validation_fbp.npy'
+  cache_size: {}
+  impl: 'astra_cuda'
+  train: {batch_size: 4, shuffle: true, num_workers: 0, pin_memory: true}
+  val:   {batch_size: 1, shuffle: false, num_workers: 0, pin_memory: true}
+
+optim:
+  name: adam
+  params:
+    lr: 2e-4
+    lr_min: 1e-5
+    weight_decay: 0.0
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  num_train_images_to_save: 5
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
+    min_relative_delta: 0.0005
+
+# FBP cache timing (for test_eval t_pre)
+fbp_time_path: ./fbp_time.json

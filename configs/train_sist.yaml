@@ -1,0 +1,76 @@
+# SIST training config (sist-info reproduction)
+
+reconstructor:
+  name: sist
+  params:
+    # sinogram transformer
+    detector_bins: 513
+    max_views: 1000
+    embed_dim: 512
+    mlp_repeats: 1
+    num_layers: 6
+    num_heads: 8
+    qkv_shared: true
+    tail_mlp_repeats: 1
+    tail_residual_blocks: 5
+    tail_refine_channels: 64
+    use_layer_norm: true
+    mlp_ratio: 4.0
+    # image noise estimator
+    conv1d_channels: 64
+    conv1d_kernel: 3
+    residual_blocks: 5
+    residual_channels: 64
+    # unet denoiser
+    unet_in_channels: 1
+    unet_out_channels: 1
+    unet_base_channels: 64
+    unet_depth: 4
+    # loss weights
+    w_sinogram_l1: 1.0
+    w_sisl: 1.0
+    w_image_l1: 1.0
+    w_noise_l1: 1.0
+    local_reduction: mean
+    global_reduction: mean
+    beam: parallel
+    angle_coverage: pi
+    conjugate_mode: auto
+    # fbp params (for image_ld input)
+    filter_type: Hann
+    frequency_scaling: 1.0
+
+data:
+  generate_cache: false
+  cache_files:
+    train: './cache_lodopab_train_fbp.npy'
+    validation: './cache_lodopab_validation_fbp.npy'
+  cache_size: {}
+  impl: 'astra_cuda'
+  train: {batch_size: 2, shuffle: true, num_workers: 0, pin_memory: true}
+  val:   {batch_size: 1, shuffle: false, num_workers: 0, pin_memory: true}
+
+optim:
+  name: adam
+  params:
+    lr: 1e-4
+    lr_min: 1e-5
+    weight_decay: 0.0
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_from: src/results/sist_stop18/final.pt
+  resume_epoch: 19
+  resume_metrics_path: results/sist_stop18/metrics_history.json
+  save_best_base:
+  num_train_images_to_save: 5
+  early_stopping:
+    monitor: val_loss
+    patience: 20
+    min_delta: 0.001
+    min_relative_delta: 0.0005

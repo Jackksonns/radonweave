@@ -1,0 +1,62 @@
+# DUGAN generator-only training config (LoDoPaB)
+
+reconstructor:
+  name: dugan
+  params:
+    dugan_num_layers: 10
+    dugan_num_channels: 32
+    dugan_kernel_size: 3
+    dugan_padding: 1
+    loss_type: mse          # mse or l1
+    pix_loss_weight: 1.0
+    grad_loss_weight: 20.0
+    img_gen_loss_weight: 0.1
+    grad_gen_loss_weight: 0.1
+    cr_loss_weight: 1.0
+    use_grad_discriminator: true
+    d_iter: 1
+    cutmix_prob: 0.5
+    cutmix_warmup_iter: 1000
+    moving_average: 0.999
+    repeat_num: 6
+    g_lr: 2e-4
+    d_lr: 2e-4
+    filter_type: Hann
+    frequency_scaling: 1.0
+
+data:
+  generate_cache: false
+  cache_files:
+    train: './cache_lodopab_train_fbp.npy'
+    validation: './cache_lodopab_validation_fbp.npy'
+  cache_size: {}
+  impl: 'astra_cuda'
+  train: {batch_size: 4, shuffle: true, num_workers: 0, pin_memory: true}
+  val:   {batch_size: 1, shuffle: false, num_workers: 0, pin_memory: true}
+
+optim:
+  name: adam
+  params:
+    lr: 2e-4
+    lr_min: 1e-5
+    weight_decay: 0.0
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  gan_mode: true
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  num_train_images_to_save: 5
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
+    min_relative_delta: 0.0005
+
+# FBP cache timing (for test_eval t_pre)
+fbp_time_path: ./fbp_time.json

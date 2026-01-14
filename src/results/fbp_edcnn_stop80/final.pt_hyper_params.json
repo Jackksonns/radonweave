@@ -1,0 +1,17 @@
+{
+  "epochs": 20,
+  "batch_size": 64,
+  "lr": 0.0002,
+  "normalize_by_opnorm": false,
+  "in_ch": 1,
+  "edcnn_out_ch": 32,
+  "edcnn_sobel_ch": 32,
+  "filter_type": "Hann",
+  "frequency_scaling": 1.0,
+  "scheduler": "cosine",
+  "lr_min": 0.0001,
+  "use_compound_loss": false,
+  "compound_mse_weight": 1.0,
+  "compound_resnet_weight": 0.01,
+  "use_sigmoid": false
+}

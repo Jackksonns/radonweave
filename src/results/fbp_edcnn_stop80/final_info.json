@@ -1,0 +1,6 @@
+{
+  "stop_epoch": 80,
+  "early_stop": true,
+  "monitor": "val_loss",
+  "best_loss_for_es": 0.0072288926998084575
+}

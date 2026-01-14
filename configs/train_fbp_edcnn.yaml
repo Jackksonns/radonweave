@@ -1,0 +1,63 @@
+reconstructor:
+  name: fbp_edcnn       # => 来自 @register("reconstructor", "fbp_edcnn")
+  params:
+    # 这些会传给 FBPEdcnnReconstructor(**params)
+    in_ch: 1
+    # EDCNN 网络结构超参
+    edcnn_out_ch: 32
+    edcnn_sobel_ch: 32
+    # FBP 参数
+    filter_type: 'Hann'
+    frequency_scaling: 1.0
+    # 输出是否用 Sigmoid（CT 通常 False）
+    use_sigmoid: false
+    # 损失开关（如开启，需确保环境可加载 torchvision 的 ResNet50 预训练）
+    use_compound_loss: false
+    compound_mse_weight: 1.0
+    compound_resnet_weight: 0.01
+
+data:
+  # 由 recon.build_dataloaders(data_cfg) 消化；把你脚本里的缓存/数据参数放进来即可
+  generate_cache: false
+  cache_params: {}
+  train: {batch_size: 2, shuffle: true}
+  val:   {batch_size: 2, shuffle: false}
+  # 数据集实现方式
+  impl: 'astra_cuda'  # 没 ASTRA/CUDA 可改 'skimage'
+  # 缓存文件路径
+  cache_files:
+    train: ['./cache_lodopab_train_fbp.npy', null]
+    validation: ['./cache_lodopab_validation_fbp.npy', null]
+
+optim:
+  name: adam
+  params: {lr: 2e-4, lr_min: 1e-5}
+  # 学习率调度器
+  scheduler: 'cosine'
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  # 日志和保存路径
+  log_dir: './results/fbp_edcnn/logs'
+  save_best_learned_params_path: './results/fbp_edcnn/best_psnr'  # 成对保存"基名"
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
+  # 数据加载器参数
+  num_workers: 0
+  pin_memory: true
+  # 日志频率
+  log_every: 100
+  checkpoint_every: null
+  # 训练结束后保存的图像数量（默认5张）
+  num_train_images_to_save: 5
+
+# FBP cache timing (for test_eval t_pre)
+fbp_time_path: ./fbp_time.json

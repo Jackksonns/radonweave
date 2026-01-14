@@ -1,0 +1,50 @@
+reconstructor:
+  name: attrdn
+  params:
+    # AttRDN (attrdn-info) architecture
+    num_features: 64
+    num_blocks: 4
+    num_layers_per_block: 4
+    growth_rate: 32
+    leaky_relu_slope: 0.01
+    attention_reduction: 16
+    attention_spatial_kernel: 7
+    use_local_residual: false
+    use_global_residual: true
+    global_residual_source: sfe1
+    # Loss (L1 + MS-SSIM)
+    loss_alpha: 0.15
+    loss_window_size: 11
+    loss_sigma: 1.5
+    loss_weights: [0.0448, 0.2856, 0.3001, 0.2363, 0.1333]
+    loss_data_range: null
+    # FBP params for image reconstruction
+    filter_type: Hann
+    frequency_scaling: 1.0
+
+data:
+  generate_cache: false
+  cache_params: {}
+  impl: 'astra_cuda'
+  train: {batch_size: 2, shuffle: true, num_workers: 0, pin_memory: true}
+  val:   {batch_size: 1, shuffle: false, num_workers: 0, pin_memory: true}
+
+optim:
+  name: adam
+  params: {lr: 1e-4, lr_min: 1e-5, weight_decay: 0.0}
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: false
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  num_train_images_to_save: 5
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
+    min_relative_delta: 0.0005

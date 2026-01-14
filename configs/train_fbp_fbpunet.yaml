@@ -1,0 +1,50 @@
+reconstructor:
+  name: fbp_unet       
+  params:
+   
+    in_ch: 1
+    out_ch: 1
+   
+    scales: 5
+    skip_channels: 4
+    channels: [32, 32, 64, 64, 128, 128]
+   
+    filter_type: 'Hann'
+    frequency_scaling: 1.0
+   
+    use_sigmoid: false
+    init_bias_zero: true
+
+data:
+  # 由 recon.build_dataloaders(data_cfg) 
+  generate_cache: false
+  cache_params: {}
+  cache_files:
+    train: ['./cache_lodopab_train_fbp.npy', null]       # Only cache FBP, GT does not cache
+    validation: ['./cache_lodopab_validation_fbp.npy', null]
+  impl: 'astra_cuda'
+  train: {batch_size: 8, shuffle: true}
+  val:   {batch_size: 1, shuffle: false}
+
+optim:
+  name: adam
+  params: {lr: 2e-4, lr_min: 1e-5}
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
+  
+  num_train_images_to_save: 5
+
+# FBP cache timing (for test_eval t_pre)
+fbp_time_path: ./fbp_time.json

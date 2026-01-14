@@ -1,0 +1,36 @@
+reconstructor:
+  name: iradonmap      
+  params:
+    # Note: iradonmap does not use fbp, so the in_ch and out_ch parameters are not required.
+    fully_learned: false
+    scales: 5
+    skip_channels: 4
+    use_sigmoid: false
+
+data:
+  
+  generate_cache: false
+  cache_params: {}
+  impl: 'astra_cuda'
+  train: {batch_size: 4, shuffle: true, pin_memory: false}
+  val:   {batch_size: 1, shuffle: false, pin_memory: false}
+
+optim:
+  name: adam
+  params: {lr: 2e-4, lr_min: 1e-5}
+  scheduler: cosine
+
+trainer:
+  device: cuda
+  epochs: 300
+  amp: true
+  max_train_steps_per_epoch: null
+  max_val_steps: null
+  resume_metrics_path: null
+  save_best_base:
+  # 训练结束后保存的图像数量（默认5张）
+  num_train_images_to_save: 5
+  early_stopping:
+    monitor: val_loss
+    patience: 10
+    min_delta: 0.001
