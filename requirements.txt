@@ -1,0 +1,10 @@
+numpy>=1.18.0
+torch>=1.7.0
+odl>=1.0.0
+astra-toolbox>=1.9.9
+tomosipo>=0.1.0
+tqdm>=4.30.0
+h5py>=2.10.0
+tensorboard>=2.0.0 
+scikit-image>=0.16.0 
+matplotlib>=3.1.0

@@ -1,0 +1,8 @@
+num_samples: 3553
+device: cuda
+t_net_mean: 0.002830493626416216
+t_net_std: 0.00384214790758272
+t_net_p95: 0.002956302836537361
+fbp_time_path: /root/autodl-tmp/configs/fbp_time.json
+t_pre_mean: 0.05510317087393645
+t_total_mean: 0.057933664500352665
