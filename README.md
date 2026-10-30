@@ -1,10 +1,10 @@
-﻿# Radonweave
+# Radonweave
 
 Research codebase for low-dose CT reconstruction/denoising on LoDoPaB-CT. It unifies FBP-input, sinogram-input, and GAN branches with shared training/eval tooling.
 
 ## Maintainer
 
-- https://github.com/Jackksonns
+- [Jackson ZHOU](https://github.com/Jackksonns)
 
 ## Features
 
